@@ -10,5 +10,6 @@ matplotlib = "*"
 nltk = "*"
 scikit-learn = "*"
 joblib = "*"
+numpy = "*"
 
 [dev-packages]
