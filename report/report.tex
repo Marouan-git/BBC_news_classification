@@ -1,0 +1,140 @@
+\documentclass[a4paper,12pt]{article}
+
+%------------------------------------------------------------------------------------------%
+% Déclaration des packages
+%------------------------------------------------------------------------------------------%
+
+\usepackage[french]{babel}
+\frenchbsetup{StandardLists=true}
+\usepackage{enumitem}
+\usepackage[T1]{fontenc}
+\usepackage{geometry} % pour gérer les dimensions des marges
+\usepackage{eso-pic} % pour dessiner la marge
+\usepackage{lipsum} % pour générer du contenu texte
+\usepackage[cyr]{aeguill} % Police vectorielle TrueType, guillemets fran¸cais
+\usepackage{epsfig} % pour g´erer les images
+\usepackage{amsmath, amsthm} % tr`es bon mode math´ematique
+\usepackage{amsfonts,amssymb}% permet la definition des ensembles
+\usepackage{float} % pour le placement des figure
+\usepackage{url} 
+\usepackage[utf8]{inputenc}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{ulem}
+\usepackage{array}	
+\usepackage{listings}
+\usepackage{siunitx}
+\usepackage{fancybox}
+\usepackage{wrapfig}
+\usepackage{caption}
+ \usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{fancyhdr}
+\usepackage{tabularx}
+\usepackage[style=authoryear,backend=biber]{biblatex}
+\addbibresource{biblio.bib} 
+
+\lstdefinelanguage{Dockerfile}{
+  keywords={FROM, RUN, CMD, LABEL, MAINTAINER, EXPOSE, ENV, ADD, COPY, ENTRYPOINT, VOLUME, USER, WORKDIR, ARG, ONBUILD, STOPSIGNAL, HEALTHCHECK, SHELL},
+  keywordstyle=\color{blue}\bfseries,
+  identifierstyle=\color{black},
+  sensitive=false,
+  comment=[l]{\#},
+  commentstyle=\color{gray}\ttfamily,
+  stringstyle=\color{green},
+  morestring=[b]",
+  morestring=[b]',
+}
+
+\lstdefinelanguage{Python}{
+  keywords={True, False, None, await, break, class, def, if, else, elif, for, while, continue, return, and, or, not, in, is, try, except, finally, raise, assert},
+  keywordstyle=\color{blue}\bfseries,
+  ndkeywords={import, from, as, with, print, yield},
+  ndkeywordstyle=\color{darkgray}\bfseries,
+  identifierstyle=\color{black},
+  comment=[l]{\#},
+  commentstyle=\color{green}\ttfamily,
+  stringstyle=\color{green},
+  morestring=[b]',
+  morestring=[b]",
+  sensitive=true,
+}
+
+
+\pagestyle{fancy}
+\fancyhf{} % Efface les configurations précédentes
+\fancyhead[L]{AI referent apprenticeship} % Titre du rapport à gauche
+\fancyhead[C]{SAPLABS} % Numéro de page au centre
+\fancyhead[R]{HADDOU Amine} % Nom de l'auteur à droite
+\fancyfoot[R]{\thepage} % Numéro de page au centre
+\fancyfoot[L]{Master 1 informatique\\parcours Intelligence Artificielle} % Numéro de page au centre
+
+\geometry{top=25mm, bottom=25mm, left=20mm, right=1cm}
+\setlength\headheight{10mm}
+\DeclareUnicodeCharacter{2212}{-}
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+\newcommand{\chatgptprompt}[1]{
+    \vspace{10pt}
+    \noindent\textbf{ChatGPT Prompt:}\\
+    \fbox{
+        \parbox{\textwidth}{
+            \texttt{#1}
+        }
+    }
+    \vspace{10pt}
+}
+
+
+
+\geometry{a4paper, margin=1in}
+
+\title{\huge\bf  Rapport d'alternance}
+\author{HADDOU Amine} 
+\begin{document}
+
+\begin{titlepage}
+    \begin{center}
+        \includegraphics[width=0.5\textwidth]{./images/logo_master.png}\\
+        \includegraphics[width=0.3\textwidth]{./images/DS4HlogocouleurFR.png} \hfill
+        \includegraphics[width=0.10\textwidth]{./images/tampon-3IA.png} \hfill
+        \textbf{\includegraphics[width=0.3\textwidth]{./images/cfa.png}} \\
+        
+        \vspace{1.5cm}
+        
+        \textbf{\LARGE Université C\^ote d'Azur}
+        
+        \vspace{0.5cm}
+        
+        \textbf{\Large MASTER INFORMATIQUE\\ Parcours INTELLIGENCE ARTIFICIELLE}
+        
+        \vspace{1.5cm}
+        
+        \rule{\linewidth}{0.5mm} \\[0.4cm]
+        {\LARGE \bfseries Algorithme de recommendation - Projet TATIA\\[0.5cm] }
+        \rule{\linewidth}{0.5mm} \\[1.5cm]
+        
+        \textbf{Authors:}\\ BOULLI Marouan \& HADDOU Amine \\
+        
+        \vspace{0.5cm}
+        
+        \textbf{Mentor:} \\
+        CABRIO Elena\\
+       
+        
+    \end{center}
+\end{titlepage}
+
+\newpage
+\maketitle
+\tableofcontents
+
+\newpage
+
+\section{Projet}
+
+
+
+\end{document}
