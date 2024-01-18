@@ -177,7 +177,26 @@ Nous allons utiliser le lemmatizer \textit{WordNetLemmatizer}, entrainé sur la 
 
 \textit{worldcom exboss launch defence lawyer defending former worldcom chief bernie ebbers battery fraud charge called company whistleblower first witness cynthia}
 
+Enfin, on vectorisera les "nouveaux" articles afin d'obtenir un jeu de donnée vectoriels. Un type de donnée très largement utilisé pour le machine learning. Cette étape sera réalisé dans un pipeline qu'on présente dans la section suivante.
 
+\section{Entrainement des modèles}
+
+Afin de classifier les articles, nous allons tester des modèles de classification. Mais il nous reste avant celà une dernière étape : couper notre jeu de donnée en deux parties. La première sera utilisée pour l'entrainement et la seconde pour les testes. Il est habituellement recommendé, pour un jeu de donnée de notre envergure, de garder $77\%$ du data set pour l'entrainement et le reste pour le training. C'est ce qu'on appliquera ici.\\
+
+\subsection{C-Support Vector Classification}.
+
+Le premier modèle choisi est le Support Vector Classification. Ce modèle est généralement utilisé sur des data set de taille moyennes (~quelques milliers) mais il se trouve qu'il peut également être très performant sur de plus petits jeu de donnée de qualité.\\
+
+\subsubsection{Pipeline}
+
+Pour l'entrainement, on crée une pipeline permettant d'automatiser une séries de tâches. La pipeline se chargera ici de
+\begin{itemize}
+\item Vectoriser les articles grâce à la classe \texttt{CountVectorizer} fourni par \textit{Scikit-learn}
+\item Tfid transforemr : j'ai oublié ce que ça fait
+\item Entrainement du modèle SVC sur le jeu de donnée modifié.
+\end{itemize}
+
+\subsubsection{Validation}
 
 
 
