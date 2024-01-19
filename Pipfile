@@ -13,5 +13,6 @@ joblib = "*"
 numpy = "*"
 seaborn = "*"
 gensim = "*"
+yake = "*"
 
 [dev-packages]
