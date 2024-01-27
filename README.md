@@ -13,6 +13,14 @@ The dataset employed is the publicly available [BBC News Classification](https:/
 
 ## Installation of Dependencies
 
+### Clone the repository
+
+Clone the repository and navigate to the main directory:
+```console
+git clone git@github.com:Marouan-git/BBC_news_classification.git
+cd .\BBC_news_classification\
+```
+
 ### Direct Installation in Notebook
 Execute the first cell in the [articles classification notebook](./articles_classification.ipynb) to install all necessary dependencies using the `!pip` command.
 
