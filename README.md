@@ -17,8 +17,8 @@ The dataset employed is the publicly available [BBC News Classification](https:/
 
 Clone the repository and navigate to the main directory:
 ```console
-git clone git@github.com:Marouan-git/BBC_news_classification.git
-cd .\BBC_news_classification\
+git clone https://github.com/Marouan-git/BBC_news_classification.git
+cd ./BBC_news_classification/
 ```
 
 ### Direct Installation in Notebook
