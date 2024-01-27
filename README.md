@@ -9,8 +9,6 @@ The aim of this project is to develop a news article recommendation system. This
 - A user-provided news article is classified by an algorithm.
 - Another algorithm searches for similar articles within the same category, providing a ranked list based on their similarity to the user's article.
 
-This notebook focuses on developing the first component of the system: a model for classifying BBC news articles.
-
 The dataset employed is the publicly available [BBC News Classification](https://kaggle.com/competitions/learn-ai-bbc), comprising 2225 articles across 5 categories: **business**, **entertainment**, **politics**, **sport**, and **tech**.
 
 ## Installation of Dependencies
@@ -26,11 +24,11 @@ Dependencies can be installed using `pipenv`.
 ```console
 pip install pipenv 
 ```
-- Install the dependecies and environnement by running :
+- Install the dependecies and a virtual environnement by running :
 ```console
 pipenv install 
 ```
-- Run the environnement by running :
+- Activate the environnement by running :
 ```console
 pipenv shell 
 ```
