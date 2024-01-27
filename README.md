@@ -13,8 +13,8 @@ The dataset employed is the publicly available [BBC News Classification](https:/
 
 ## Installation of Dependencies
 
-### Direct Installation in Notebooks
-Execute the first cell in the notebooks to install all necessary dependencies using the `!pip` command.
+### Direct Installation in Notebook
+Execute the first cell in the [articles classification notebook](./articles_classification.ipynb) to install all necessary dependencies using the `!pip` command.
 
 ### Using pipenv (Recommended)
 
