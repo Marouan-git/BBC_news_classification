@@ -175,7 +175,7 @@ Nous commencerons par éliminer la ponctuation des articles, car elle ne contrib
 Enfin, toujours avec l'idée de nous intéresser seulement au sens global de l'article, nous allons réaliser une lemmatisation. Ce procédé nous permettra de mettre en évidence les mots clés des articles, normaliser le texte et améliorer la précision sémantique des modèles de machine learning.\\
 Nous allons utiliser le lemmatizer \textit{WordNetLemmatizer}, entrainé sur la base de donnée \textit{WordNet}, pour lemmatiser notre jeu de donnée. Appliqué sur l'exemple précédent, nous obtenons le résultat suivant : \\
 
-\textit{worldcom exboss launch defence lawyer defending former worldcom chief bernie ebbers battery fraud charge called company whistleblower first witness cynthia}
+\textit{worldcom exboss launch defence lawyer defending former worldcom chief bernie ebbers battery fraud charge called company whistleblower first witness cynthia}\\
 
 Enfin, on vectorisera les "nouveaux" articles afin d'obtenir un jeu de donnée vectoriels. Un type de donnée très largement utilisé pour le machine learning. Cette étape sera réalisé dans un pipeline qu'on présente dans la section suivante.
 
@@ -183,22 +183,42 @@ Enfin, on vectorisera les "nouveaux" articles afin d'obtenir un jeu de donnée v
 
 Afin de classifier les articles, nous allons tester des modèles de classification. Mais il nous reste avant celà une dernière étape : couper notre jeu de donnée en deux parties. La première sera utilisée pour l'entrainement et la seconde pour les testes. Il est habituellement recommendé, pour un jeu de donnée de notre envergure, de garder $77\%$ du data set pour l'entrainement et le reste pour le training. C'est ce qu'on appliquera ici.\\
 
-\subsection{C-Support Vector Classification}.
+\subsection{Support Vector Machine Classifier}
 
-Le premier modèle choisi est le Support Vector Classification. Ce modèle est généralement utilisé sur des data set de taille moyennes (~quelques milliers) mais il se trouve qu'il peut également être très performant sur de plus petits jeu de donnée de qualité.\\
+Le premier modèle choisi est le Support Vector Machine Classifier. Ce modèle est généralement utilisé sur des data set de taille moyennes (~quelques milliers) mais il se trouve qu'il peut également être très performant sur de plus petits jeu de donnée de qualité.\\
 
 \subsubsection{Pipeline}
 
-Pour l'entrainement, on crée une pipeline permettant d'automatiser une séries de tâches. La pipeline se chargera ici de
+Pour l'entrainement, on crée deux pipeline permettant d'automatiser une séries de tâches. La pipeline se chargera ici de
 \begin{itemize}
 \item Vectoriser les articles grâce à la classe \texttt{CountVectorizer} fourni par \textit{Scikit-learn}
-\item Tfid transforemr : j'ai oublié ce que ça fait
+\item Tfid transformer : calcule le poids des mots dans chaque phrase en fonction de leur fréquence dans le corupus.
+\item Entrainement du modèle SVC sur le jeu de donnée modifié.
+\end{itemize}
+
+\begin{itemize}
+\item Vectoriser les articles grâce à la classe \texttt{CountVectorizer} fourni par \textit{Scikit-learn}
+\item \textit{Doc2Vec} : une méthode donnant un poids aux mots en se basant sur des réseaux  de neurones.
 \item Entrainement du modèle SVC sur le jeu de donnée modifié.
 \end{itemize}
 
 \subsubsection{Validation}
 
+Pour valider un modèle, nous allons nous baser sur les métrics proposés par Scikit-learn : l'accuracy et la précision principalement. En utilisant les deux pipelines, on obtient les mêmes résultats sauf pour l'accuracy. On gagne 1\% de plus en score en utilisant \textit{Doc2Vec} 97\% contre 98\%.
 
+\subsection{K-neighbhors Classifier}
+
+Le second modèle choisi est le K-neighbhors Classifier. Ce modèle peut performer correctement sur notre dataset, mais il est généralement plus lent que le précédent.\\
+
+\subsubsection{Pipeline}
+
+Pour l'entrainement, on reprend les deux pipeline présenter précédemment.
+
+\subsubsection{Validation}
+
+En utilisant les deux pipelines, on obtient de moins bons résultats en utillisant le \textit{TFIDF} (95\% d'accuracy). Alors qu'en utilisant le \textit{Doc2Vec}, on obtient des résultats similaires à ceux du SVM entrainé avec une "pipeline \textit{TFIDF}".
+
+\section{Recommendation d'articles}
 
 
 
