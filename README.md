@@ -9,14 +9,20 @@ The aim of this project is to develop a news article recommendation system. This
 - A user-provided news article is classified by an algorithm.
 - Another algorithm searches for similar articles within the same category, providing a ranked list based on their similarity to the user's article.
 
-This notebook focuses on developing the first component of the system: a model for classifying BBC news articles.
-
 The dataset employed is the publicly available [BBC News Classification](https://kaggle.com/competitions/learn-ai-bbc), comprising 2225 articles across 5 categories: **business**, **entertainment**, **politics**, **sport**, and **tech**.
 
 ## Installation of Dependencies
 
-### Direct Installation in Notebooks
-Execute the first cell in the notebooks to install all necessary dependencies using the `!pip` command.
+### Clone the repository
+
+Clone the repository and navigate to the main directory:
+```console
+git clone https://github.com/Marouan-git/BBC_news_classification.git
+cd ./BBC_news_classification/
+```
+
+### Direct Installation in Notebook
+Execute the first cell in the [articles classification notebook](./articles_classification.ipynb) to install all necessary dependencies using the `!pip` command.
 
 ### Using pipenv (Recommended)
 
@@ -26,11 +32,11 @@ Dependencies can be installed using `pipenv`.
 ```console
 pip install pipenv 
 ```
-- Install the dependecies and environnement by running :
+- Install the dependecies and a virtual environnement by running :
 ```console
 pipenv install 
 ```
-- Run the environnement by running :
+- Activate the environnement by running :
 ```console
 pipenv shell 
 ```
