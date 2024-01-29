@@ -133,92 +133,132 @@
 
 \newpage
 
-\section{Recommendation d'article}
+\section{Recommandation d'articles}
 
+Comme sujet de projet, nous avons choisi d'implémenter un algorithme de recommandation d'articles en fonction du dernier article lu par l'utilisateur. Le fonctionnement de cet algorithme se décompose en deux étapes principales : classifier l'article et fournir un classement d'articles similaires au dernier lu.\\
 
-Comme sujet de projet, nous avons fais le choix d'implémenter un alogrithme de recommendation d'article en fonction du dernier article lu par l'utilisateur. Le fonctionnement de cet algorithme se décomposera en deux étapes principales : classifier l'article et fournir un classement d'articles similaires au dernier lu.\\
+Concernant la classification, nous travaillerons avec 5 catégories d'articles différentes. Ce choix a été imposé par le jeu de données trouvé, mais ces catégories englobent un ensemble d'articles riche et diversifié. Les catégories sont \textit{business}, \textit{entertainment}, \textit{politics}, \textit{sport}, et \textit{tech}.\\
 
-Concernant la classification, nous travaillerons avec 5 catégories d'articles différentes. Ce choix a été imposé par le jeu de donnée trouvée mais ces catégories englobent un ensemble d'article riche et divers. Les catégories sont \textit{buisness}, \textit{entertainment}, \textit{politics}, \textit{sport} and \textit{tech}.\\
+Une fois l'article classifié, l'algorithme proposera un classement des 3 articles les plus similaires dans notre jeu de données. Notre classement sera basé sur un calcul de similarité de l'article lu comparé aux autres articles de la même catégorie.\\
 
-Une fois l'article classifiée, l'algorithme proposera un classement des 3 articles les plus similaires dans notre jeu de donnée. On basera notre classement sur un calcul de similiarité de l'article lu comparé aux autres articles de la même catégorie.\\
+On pourrait alors se demander quelle est l'utilité de classifier l'article. Dans un contexte d'une large base de données, il est important de prendre en compte le coût et la consommation de calcul de similarité sur un grand ensemble d'articles différents. De plus, nous souhaitons que les articles recommandés appartiennent à la même catégorie que le dernier article lu par l'utilisateur. Nous implémenterons l'algorithme dans cette logique.\\
 
-On pourrait alors se demander quelle est l'utilité de classifier l'article. Dans un contexte d'une large base de donnée, il est important de prendre en compte le prix et consommation de calcul de similiarité sur un grand ensemble d'articles différents. De plus, on souhaite dans le cadre de notre projet que les articles recommendés appartiennent à la même catégorie que le dernier article lu par l'utilisateur. On implémentera l'algorithme dans cette logique.\\
+Enfin, nous devrons valider notre algorithme pour en juger l'efficacité. Pour ce faire, nous baserons la validation sur deux métriques : l'\textit{accuracy} et le ratio de mots clés similaires entre les articles.\\
 
-Enfin, on devra valider notre algorithme pour en juger l'effficacité. Pour se faire, nous baserons la validation sur deux métriques : l'\textit{accuracy} et le ration de mot clés similaires entre les deux articles.
+\section{Jeu de données}
 
-\section{Jeu De Donnée}
+Comme base de données pour ce projet, nous avons choisi le jeu de données d'articles de la BBC disponible sur \href{https://www.kaggle.com/c/learn-ai-bbc}{Kaggle}.\\
 
-Comme base de données pour ce projet, nous avons choisi le jeu de donnée d'article de la BBC disponible sur \href{ https://www.kaggle.com/c/learn-ai-bbc}{Kaggle}.\\
+Le jeu de données est décomposé en deux ensembles : un ensemble de \textit{training} contenant 1490 articles, et un second de \textit{testing} contenant 735. La différence entre les deux ensembles réside dans la classification des articles. Les articles du premier ensemble sont labellisés alors que ceux du second ne le sont pas. Pour cette raison, nous nous limiterons à travailler avec le premier ensemble pour le moment. Nous n'utiliserons le second que lors de la validation pour tester les performances de l'algorithme final.\\
 
-Le jeu de donnée est décomposée en deux ensembles de données : un ensemble de \textit{training} contenant 1490 articles, et un second de \textit{testing} contenant 735. La différence entre les deux ensembles est dans la classification des articles. Les articles du premier ensemble sont labellisés (classifiés) alors que ceux du second ne le sont pas. Pour cette raison, nous nous limiterons à travailler avec le premier ensemble pour le moment. Nous n'utiliserons le second que lors de la validation pour tester les performances de l'algorithme finale.\\
-
-Il est ensuite important de vérifier que le jeu de donnée n'est pas biaisé en sur-représentant (resp. sous-représentant) une catégorie. Or, notre jeu de donné est bien équilibre avec des catégories qui représentent de $17.5 \%-23.3\%$ de l'ensemble des données \autoref{fig:classBalance}.\\
+Il est ensuite important de vérifier que le jeu de données n'est pas biaisé en sur-représentant ou sous-représentant une catégorie. Notre jeu de données est bien équilibré, avec des catégories représentant entre $17.5\%$ et $23.3\%$ de l'ensemble des données, comme le montre la Figure \autoref{fig:classBalance}.
 
 \begin{figure}[h]
   \centering
   \includegraphics{./images/class_balanced.png} % Spécifiez le chemin de votre image
-  \caption{Proportion des catégories d'article}
+  \caption{Proportion des catégories d'articles}
   \label{fig:classBalance}
 \end{figure}
 
-\subsection{Preprocessing}
+\subsection{Prétraitement}
 
-Avant d'entamer l'implémentation de l'algorithme, il est essentiel de débuter par le prétraitement de notre jeu de données. Cette phase revêt une importance cruciale, car elle conditionnera la qualité de nos données et, par conséquent, celle de notre algorithme.\\
+Avant d'entamer l'implémentation de l'algorithme, il est essentiel de débuter par le prétraitement de notre jeu de données. Cette phase est cruciale, car elle conditionne la qualité de nos données et, par conséquent, celle de notre algorithme.\\
 
-Il convient de souligner, dans un premier temps, que notre jeu de données est prêt à être traité. Les modèles de machine learning présentent des performances médiocres lorsqu'ils sont confrontés à des données textuelles. L'objectif principal est de surmonter cette contrainte en apportant des modifications subtiles à notre base de données.\\
+Il convient de souligner que notre jeu de données est prêt à être traité. Les modèles de machine learning présentent des performances médiocres avec des données textuelles brutes. L'objectif principal est de surmonter cette contrainte en apportant des modifications subtiles à notre base de données.\\
 
-Nous commencerons par éliminer la ponctuation des articles, car elle ne contribue pas à la valeur ajoutée de la classification. Dans cette démarche, nous recherchons le sens global plutôt que le sens par phrase. Toutefois, nous procéderons également à la suppression des mots dépourvus de sens sémantique, tels que les articles et les propositions. Voici un exemple des modifications apportées :\\
+Nous commencerons par éliminer la ponctuation des articles, car elle ne contribue pas à la valeur sémantique de la classification. Ensuite, nous supprimerons les mots dépourvus de sens sémantique, tels que les articles et les prépositions. Voici un exemple des modifications apportées :
 
-\textit{worldcom ex-boss launches defence lawyers defending former worldcom chief bernie ebbers against a battery of fraud charges have called a company whistleblower as their first witness. [..]}\\
-\textit{worldcom exboss launches defence lawyers defending former worldcom chief bernie ebbers battery fraud charges called company whistleblower first witness cynthia [..]}\\
+\textit{``WorldCom ex-boss launches defense. Lawyers defending former WorldCom chief Bernie Ebbers against a battery of fraud charges have called a company whistleblower as their first witness.''}
 
-Enfin, toujours avec l'idée de nous intéresser seulement au sens global de l'article, nous allons réaliser une lemmatisation. Ce procédé nous permettra de mettre en évidence les mots clés des articles, normaliser le texte et améliorer la précision sémantique des modèles de machine learning.\\
-Nous allons utiliser le lemmatizer \textit{WordNetLemmatizer}, entrainé sur la base de donnée \textit{WordNet}, pour lemmatiser notre jeu de donnée. Appliqué sur l'exemple précédent, nous obtenons le résultat suivant : \\
+\textit{``WorldCom ex-boss launches defense. Lawyers defending former WorldCom chief Bernie Ebbers battery fraud charges called company whistleblower first witness.''}\\
 
-\textit{worldcom exboss launch defence lawyer defending former worldcom chief bernie ebbers battery fraud charge called company whistleblower first witness cynthia}\\
+Enfin, nous réaliserons une lemmatisation pour nous concentrer uniquement sur le sens global de l'article. Ce procédé nous permettra de mettre en évidence les mots clés, de normaliser le texte et d'améliorer la précision sémantique des modèles de machine learning. Nous utiliserons le lemmatizer \textit{WordNetLemmatizer}, entraîné sur la base de données \textit{WordNet}, pour lemmatiser notre jeu de données. Appliqué sur l'exemple précédent, nous obtenons :
 
-Enfin, on vectorisera les "nouveaux" articles afin d'obtenir un jeu de donnée vectoriels. Un type de donnée très largement utilisé pour le machine learning. Cette étape sera réalisé dans un pipeline qu'on présente dans la section suivante.
+\textit{``WorldCom ex-boss launch defense lawyer defend former WorldCom chief Bernie Ebbers battery fraud charge call company whistleblower first witness.''}
 
-\section{Entrainement des modèles}
+Enfin, nous vectoriserons les articles transformés pour obtenir un jeu de données adapté au machine learning. Cette étape sera réalisée dans un pipeline présenté dans la section suivante.
 
-Afin de classifier les articles, nous allons tester des modèles de classification. Mais il nous reste avant celà une dernière étape : couper notre jeu de donnée en deux parties. La première sera utilisée pour l'entrainement et la seconde pour les testes. Il est habituellement recommendé, pour un jeu de donnée de notre envergure, de garder $77\%$ du data set pour l'entrainement et le reste pour le training. C'est ce qu'on appliquera ici.\\
+\section{Entraînement des modèles}
+
+Afin de classifier les articles, nous testerons différents modèles de classification. Mais avant cela, il nous reste une dernière étape : diviser notre jeu de données en deux parties. La première sera utilisée pour l'entraînement et la seconde pour les tests. Il est recommandé, pour un jeu de données de notre envergure, de conserver $77\%$ du dataset pour l'entraînement et le reste pour les tests, ce que nous appliquerons ici.
 
 \subsection{Support Vector Machine Classifier}
 
-Le premier modèle choisi est le Support Vector Machine Classifier. Ce modèle est généralement utilisé sur des data set de taille moyennes (~quelques milliers) mais il se trouve qu'il peut également être très performant sur de plus petits jeu de donnée de qualité.\\
+Le premier modèle choisi est le Support Vector Machine Classifier. Ce modèle est généralement utilisé sur des datasets de taille moyenne (quelques milliers), mais il peut également être très performant sur des jeux de données de qualité plus restreints.
+
 
 \subsubsection{Pipeline}
 
-Pour l'entrainement, on crée deux pipeline permettant d'automatiser une séries de tâches. La pipeline se chargera ici de
+Pour l'entraînement, nous créons deux pipelines permettant d'automatiser une série de tâches. Chaque pipeline se charge de :
 \begin{itemize}
-\item Vectoriser les articles grâce à la classe \texttt{CountVectorizer} fourni par \textit{Scikit-learn}
-\item Tfid transformer : calcule le poids des mots dans chaque phrase en fonction de leur fréquence dans le corupus.
-\item Entrainement du modèle SVC sur le jeu de donnée modifié.
+    \item Vectoriser les articles grâce à la classe \texttt{CountVectorizer} fournie par \textit{Scikit-learn}.
+    \item \textit{TfidfTransformer} : calcule le poids des mots dans chaque phrase en fonction de leur fréquence dans le corpus.
+    \item Entraîner le modèle SVC sur le jeu de données modifié.
 \end{itemize}
 
+La deuxième pipeline est la suivante :
 \begin{itemize}
-\item Vectoriser les articles grâce à la classe \texttt{CountVectorizer} fourni par \textit{Scikit-learn}
-\item \textit{Doc2Vec} : une méthode donnant un poids aux mots en se basant sur des réseaux  de neurones.
-\item Entrainement du modèle SVC sur le jeu de donnée modifié.
+    \item Vectoriser les articles grâce à la classe \texttt{CountVectorizer} fournie par \textit{Scikit-learn}.
+    \item \textit{Doc2Vec} : une méthode donnant un poids aux mots en se basant sur des réseaux de neurones.
+    \item Entraîner le modèle SVC sur le jeu de données modifié.
 \end{itemize}
 
 \subsubsection{Validation}
 
-Pour valider un modèle, nous allons nous baser sur les métrics proposés par Scikit-learn : l'accuracy et la précision principalement. En utilisant les deux pipelines, on obtient les mêmes résultats sauf pour l'accuracy. On gagne 1\% de plus en score en utilisant \textit{Doc2Vec} 97\% contre 98\%.
+Pour valider un modèle, nous nous baserons sur les métriques proposées par Scikit-learn : l'accuracy et la précision principalement. En utilisant les deux pipelines, on obtient les mêmes résultats sauf pour l'accuracy. On gagne 1\% de plus en score en utilisant \textit{Doc2Vec} : 98\% contre 97\%.
 
-\subsection{K-neighbhors Classifier}
+\subsection{K-Neighbors Classifier}
 
-Le second modèle choisi est le K-neighbhors Classifier. Ce modèle peut performer correctement sur notre dataset, mais il est généralement plus lent que le précédent.\\
+Le second modèle choisi est le K-Neighbors Classifier. Ce modèle peut performer correctement sur notre dataset, mais il est généralement plus lent que le précédent.
 
 \subsubsection{Pipeline}
 
-Pour l'entrainement, on reprend les deux pipeline présenter précédemment.
+Pour l'entraînement, nous reprenons les deux pipelines présentées précédemment.
 
 \subsubsection{Validation}
 
-En utilisant les deux pipelines, on obtient de moins bons résultats en utillisant le \textit{TFIDF} (95\% d'accuracy). Alors qu'en utilisant le \textit{Doc2Vec}, on obtient des résultats similaires à ceux du SVM entrainé avec une "pipeline \textit{TFIDF}".
+En utilisant les deux pipelines, on obtient de moins bons résultats en utilisant le \textit{TF-IDF} (95\% d'accuracy). Alors qu'avec \textit{Doc2Vec}, on obtient des résultats similaires à ceux du SVM entraîné avec une pipeline \textit{TF-IDF}.
 
-\section{Recommendation d'articles}
+\section{Recommandation d'articles}
+
+Dans cette section, nous nous intéressons à la seconde tâche de notre algorithme : la recommandation d'articles similaires.
+
+\subsection{Cosine Similarity}
+
+Pour calculer la similarité entre deux articles, nous avons utilisé la métrique \textit{cosine similarity} fournie par la librairie \textit{Scikit-Learn} en Python. Nous avons calculé cette métrique entre l'article de l'utilisateur et tous les articles filtrés à l'étape précédente. Enfin, nous avons sélectionné seulement les trois articles ayant la plus grande valeur.\\
+
+Notre algorithme recommandera alors ces trois articles qu'il considérera comme les plus proches de l'original.
+
+\subsection{Évaluation}
+
+Après avoir implémenté cette méthode, il nous fallait l'évaluer. Quelle est la cohérence des recommandations ? Pour cela, nous avons utilisé deux méthodes différentes. Un de nos objectifs secondaires était de trouver une manière d'automatiser cette évaluation, car habituellement elle est manuelle.
+
+\subsubsection{Évaluation par extraction de mots-clés}
+
+La première méthode que nous avons utilisée est l'extraction de mots-clés. Nous avons extrait les mots-clés de chaque document en utilisant une fonction proposée par la librairie \textit{yake}.\\
+
+Nous avons ensuite calculé la similarité entre les articles en nous basant sur le nombre de mots-clés en commun.\\
+
+Pour calculer l'accuracy de notre méthode, nous sommes partis du principe que si \textbf{un} des 3 articles recommandés figurait parmi les articles similaires (selon la méthode d'extraction de mots-clés), alors la recommandation était bonne.\\
+
+Nous avons alors obtenu une accuracy de 34\%.
+
+\subsubsection{Évaluation par LLM}
+
+Cette méthode n'étant pas satisfaisante, nous avons décidé de tester une autre manière d'évaluer nos résultats en utilisant de grands modèles de langage. Dans le cadre de cette évaluation, nous avons utilisé OPENAI-GPT4, Claude AI, GEMINI et Mistral AI.\\
+
+Nous leur avons fourni un article utilisateur et 10 autres articles aléatoires de la même catégorie. Nous leur avons ensuite demandé de retourner les 3 articles les plus similaires selon eux.\\
+
+Tous les LLM ont retourné quasiment les 2 premiers articles et ont chacun proposé un article différent pour la 3ème position. Malheureusement, seul le 3ème article proposé par Gemini a été recommandé par notre algorithme.
+
+\subsubsection{Évaluation manuelle}
+
+Toutefois, ces méthodes d'évaluation ne sont pas parfaites et les résultats ne sont pas concluants. En effet, l'extraction de mots-clés pour évaluer la similarité entre deux articles est une méthode moins efficace que la \textit{cosine similarity}. De même, le classement des articles de recommandations par les LLM n'a pas de grande valeur, car on ne sait pas comment cette évaluation est effectuée.\\
+
+Le meilleur moyen d'évaluer l'algorithme est de le tester manuellement avec des utilisateurs réels. Les résultats obtenus seront alors plus concluants et cohérents pour évaluer notre modèle.
+
+
+\section{Conclusion}
 
 
 
