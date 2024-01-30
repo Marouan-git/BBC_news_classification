@@ -33,8 +33,12 @@
 \usepackage{booktabs}
 \usepackage{fancyhdr}
 \usepackage{tabularx}
-\usepackage[style=authoryear,backend=biber]{biblatex}
-\addbibresource{biblio.bib} 
+%\usepackage[style=authoryear,backend=biber]{biblatex}
+%\addbibresource{references.bib} 
+
+% To handle bibliography
+\usepackage[backend=bibtex, style=ieee, sorting=ynt]{biblatex} %Imports biblatex package
+\addbibresource{references.bib} %Import the bibliography file
 
 \lstdefinelanguage{Dockerfile}{
   keywords={FROM, RUN, CMD, LABEL, MAINTAINER, EXPOSE, ENV, ADD, COPY, ENTRYPOINT, VOLUME, USER, WORKDIR, ARG, ONBUILD, STOPSIGNAL, HEALTHCHECK, SHELL},
@@ -62,14 +66,19 @@
   sensitive=true,
 }
 
+\setlength{\parindent}{0pt}
+
 
 \pagestyle{fancy}
 \fancyhf{} % Efface les configurations précédentes
-\fancyhead[L]{AI referent apprenticeship} % Titre du rapport à gauche
-\fancyhead[C]{SAPLABS} % Numéro de page au centre
-\fancyhead[R]{HADDOU Amine} % Nom de l'auteur à droite
+\fancyhead[L]{\includegraphics[width=0.3\textwidth]{images/DS4HlogocouleurFR.png} \hfill} % Titre du rapport à gauche
+\fancyhead[R]{\textit{TATIA : Classification et recommandation d'articles}} % Nom de l'auteur à droite
 \fancyfoot[R]{\thepage} % Numéro de page au centre
-\fancyfoot[L]{Master 1 informatique\\parcours Intelligence Artificielle} % Numéro de page au centre
+\fancyfoot[L]{Master 1 informatique} % Numéro de page au centre
+
+% To handle bibliography
+%\usepackage[backend=bibtex, style=ieee, sorting=ynt]{biblatex} %Imports biblatex package
+%\addbibresource{references.bib} %Import the bibliography file
 
 \geometry{top=25mm, bottom=25mm, left=20mm, right=1cm}
 \setlength\headheight{10mm}
@@ -91,29 +100,26 @@
 
 \geometry{a4paper, margin=1in}
 
-\title{\huge\bf  Rapport d'alternance}
-\author{HADDOU Amine} 
+\title{\huge\bf  Rapport de projet Tatia}
+\author{HADDOU Amine et BOULLI Marouan} 
 \begin{document}
 
 \begin{titlepage}
     \begin{center}
-        \includegraphics[width=0.5\textwidth]{./images/logo_master.png}\\
         \includegraphics[width=0.3\textwidth]{./images/DS4HlogocouleurFR.png} \hfill
         \includegraphics[width=0.10\textwidth]{./images/tampon-3IA.png} \hfill
-        \textbf{\includegraphics[width=0.3\textwidth]{./images/cfa.png}} \\
+        \textbf{\includegraphics[width=0.3\textwidth]{images/logo_master.png}} \\
         
-        \vspace{1.5cm}
+        \vspace{3.5cm}
         
-        \textbf{\LARGE Université C\^ote d'Azur}
         
-        \vspace{0.5cm}
         
-        \textbf{\Large MASTER INFORMATIQUE\\ Parcours INTELLIGENCE ARTIFICIELLE}
+        \textbf{\LARGE Projet TATIA}
         
-        \vspace{1.5cm}
+        \vspace{2.5cm}
         
         \rule{\linewidth}{0.5mm} \\[0.4cm]
-        {\LARGE \bfseries Algorithme de recommendation - Projet TATIA\\[0.5cm] }
+        {\LARGE \bfseries Classification et recommandation d'articles\\[0.5cm] }
         \rule{\linewidth}{0.5mm} \\[1.5cm]
         
         \textbf{Authors:}\\ BOULLI Marouan \& HADDOU Amine \\
@@ -133,176 +139,351 @@
 
 \newpage
 
-\section{Recommandation d'articles}
+\section{Contexte et objectif}
 
-Comme sujet de projet, nous avons choisi d'implémenter un algorithme de recommandation d'articles en fonction du dernier article lu par l'utilisateur. Le fonctionnement de cet algorithme se décompose en deux étapes principales : classifier l'article et fournir un classement d'articles similaires au dernier lu.\\
 
-Concernant la classification, nous travaillerons avec 5 catégories d'articles différentes. Ce choix a été imposé par le jeu de données trouvé, mais ces catégories englobent un ensemble d'articles riche et diversifié. Les catégories sont \textit{business}, \textit{entertainment}, \textit{politics}, \textit{sport}, et \textit{tech}.\\
+Ce projet s'inscrit dans le cadre de l'unité d'enseignement Tatia (Traitement automatique du texte en intelligence artificielle) et a pour but de mettre en application les connaissances relatives au traitement automatique du texte acquises au cours des enseignements.\\
 
-Une fois l'article classifié, l'algorithme proposera un classement des 3 articles les plus similaires dans notre jeu de données. Notre classement sera basé sur un calcul de similarité de l'article lu comparé aux autres articles de la même catégorie.\\
+Pour ce faire, un système de classification et de recommandation d'articles d'actualité est développé.
 
-On pourrait alors se demander quelle est l'utilité de classifier l'article. Dans un contexte d'une large base de données, il est important de prendre en compte le coût et la consommation de calcul de similarité sur un grand ensemble d'articles différents. De plus, nous souhaitons que les articles recommandés appartiennent à la même catégorie que le dernier article lu par l'utilisateur. Nous implémenterons l'algorithme dans cette logique.\\
-
-Enfin, nous devrons valider notre algorithme pour en juger l'efficacité. Pour ce faire, nous baserons la validation sur deux métriques : l'\textit{accuracy} et le ratio de mots clés similaires entre les articles.\\
-
-\section{Jeu de données}
-
-Comme base de données pour ce projet, nous avons choisi le jeu de données d'articles de la BBC disponible sur \href{https://www.kaggle.com/c/learn-ai-bbc}{Kaggle}.\\
-
-Le jeu de données est décomposé en deux ensembles : un ensemble de \textit{training} contenant 1490 articles, et un second de \textit{testing} contenant 735. La différence entre les deux ensembles réside dans la classification des articles. Les articles du premier ensemble sont labellisés alors que ceux du second ne le sont pas. Pour cette raison, nous nous limiterons à travailler avec le premier ensemble pour le moment. Nous n'utiliserons le second que lors de la validation pour tester les performances de l'algorithme final.\\
-
-Il est ensuite important de vérifier que le jeu de données n'est pas biaisé en sur-représentant ou sous-représentant une catégorie. Notre jeu de données est bien équilibré, avec des catégories représentant entre $17.5\%$ et $23.3\%$ de l'ensemble des données, comme le montre la Figure \autoref{fig:classBalance}.
+L'idée est la suivante : 
+\begin{itemize}
+    \item Un utilisateur fournit en entrée un article d'actualité non classifié.
+    \item Cet article est classifié dans l'une des 5 classes présentes dans le jeu de données utilisé pour l'entraînement du modèle (\textit{buisness}, \textit{entertainment}, \textit{politics}, \textit{sport} and \textit{tech})
+    \item Un algorithme calcule la similarité entre cet article et d'autres articles appartenant à la même classe contenus dans le jeu de données étiquetées.
+    \item Un classement des articles en fonction de leur similarité avec l'article fournit par l'utilisateur est réalisé et l'algorithme recommande les trois articles ayant les scores de similarité les plus élevés.
+\end{itemize}
 
 \begin{figure}[h]
   \centering
+  \includegraphics{./images/recommendation_system.png}
+  \caption{Système de recommandation}
+  \label{fig:recommendationSystem}
+\end{figure}
+
+
+
+L'article fournit par l'utilisateur est classifié avant de réaliser le calcul de similarité pour filtrer les articles sur lesquels le calcul de similarité est effectué. Ce faisant, on écarte tous les articles ne traitant pas du même thème. Le calcul de similarité n'est donc pas réalisé sur ces articles, économisant ainsi des ressources de calcul (point important si l'on considère des grandes bases de données).\\
+
+Un des principaux challenges liés à ce projet concerne l'évaluation du système de recommandation. En effet, habituellement, l'évaluation de ce type de modèle implique la participation de plusieurs personnes chargés d'évaluer la qualité des recommandations. Toutefois, une tentative d'automatisation de cette évaluation suivant deux méthodes différentes est implémentée dans ce projet : 
+\begin{itemize}
+    \item Une évaluation basée sur la proportion de mots-clés communs entre l'article fournit par l'utilisateur et les articles recommandés.
+    \item Une autre basée sur une comparaison avec les résultats obtenus en utilisant des LLMs (Large Language Models).
+    \item Une évaluation utilisateur "manuelle" réalisée par nous-mêmes.
+\end{itemize}
+
+Ces méthodes sont présentées et discutées plus loin dans ce rapport.
+
+\section{Données}
+
+\subsection{Description}
+
+Le jeu de données utilisé contient des articles d'actualité de la BBC disponible sur \href{ https://www.kaggle.com/c/learn-ai-bbc}{Kaggle} \cite{kaggle}.\\
+
+Il est composé d'un ensemble de données d'entraînement contenant 1490 articles étiquetés suivant les catégories \textit{buisness}, \textit{entertainment}, \textit{politics}, \textit{sport} and \textit{tech}, et d'un ensemble de données de test comportant 735 articles non étiquetés. Le jeu de données de test n'est pas étiqueté car il est d'usage dans les compétitions Kaggle de garder une partie des données non étiquetée afin de s'en servir comme matériel d'évaluation des modèles des participants à la compétition.\\
+
+Le premier ensemble de données étiquetés est utilisé pour l'entraînement et l'évaluation du modèle de classification, ainsi que pour servir de base de données d'articles étiquetés pouvant être recommandés par l'algorithme de recommandation.
+
+Le second ensemble de données non étiquetées est quant à lui utilisé comme base de données d'articles pouvant être fournis par l'utilisateur. L'utilisateur choisit un article non étiqueté dans cette base de données, cet article est ensuite classsifié par l'algorithme de classification puis donné en entrée de l'algorithme de recommandation qui donne en sortie les trois articles les plus similaires appartenant à la même classe.\\
+
+Il est important de vérifier que le jeu de donnée n'est pas biaisé en sur-représentant (resp. sous-représentant) une catégorie d'articles. Si c'est le cas, le modèle est susceptible de favoriser la prédiction des classes les plus représentés.
+
+\begin{figure}[H]
+  \centering
   \includegraphics{./images/class_balanced.png} % Spécifiez le chemin de votre image
-  \caption{Proportion des catégories d'articles}
+  \caption{Proportion des catégories d'article}
   \label{fig:classBalance}
 \end{figure}
 
+Ce jeu de données est bien équilibré avec des catégories qui représentent de $17.5 \%-23.3\%$ de l'ensemble des données (pour cinq classes, l'équilibre parfait est à 20\%). Nul besoin de sur-échantillonner ou sous-échantillonner les classes.\\
+
 \subsection{Prétraitement}
 
-Avant d'entamer l'implémentation de l'algorithme, il est essentiel de débuter par le prétraitement de notre jeu de données. Cette phase est cruciale, car elle conditionne la qualité de nos données et, par conséquent, celle de notre algorithme.\\
+Avant d'entamer l'implémentation de l'algorithme, il est essentiel de débuter par le prétraitement du jeu de données. Cette phase revêt une importance cruciale, car elle conditionnera la qualité de nos données et, par conséquent, celle des prédictions de notre algorithme.
 
-Il convient de souligner que notre jeu de données est prêt à être traité. Les modèles de machine learning présentent des performances médiocres avec des données textuelles brutes. L'objectif principal est de surmonter cette contrainte en apportant des modifications subtiles à notre base de données.\\
+L'idée est de retirer tout ce qui n'apporte pas de plus-value sémantique, pusique c'est la sémantique qui nous intéresse ici.\\
 
-Nous commencerons par éliminer la ponctuation des articles, car elle ne contribue pas à la valeur sémantique de la classification. Ensuite, nous supprimerons les mots dépourvus de sens sémantique, tels que les articles et les prépositions. Voici un exemple des modifications apportées :
-
-\textit{``WorldCom ex-boss launches defense. Lawyers defending former WorldCom chief Bernie Ebbers against a battery of fraud charges have called a company whistleblower as their first witness.''}
-
-\textit{``WorldCom ex-boss launches defense. Lawyers defending former WorldCom chief Bernie Ebbers battery fraud charges called company whistleblower first witness.''}\\
-
-Enfin, nous réaliserons une lemmatisation pour nous concentrer uniquement sur le sens global de l'article. Ce procédé nous permettra de mettre en évidence les mots clés, de normaliser le texte et d'améliorer la précision sémantique des modèles de machine learning. Nous utiliserons le lemmatizer \textit{WordNetLemmatizer}, entraîné sur la base de données \textit{WordNet}, pour lemmatiser notre jeu de données. Appliqué sur l'exemple précédent, nous obtenons :
-
-\textit{``WorldCom ex-boss launch defense lawyer defend former WorldCom chief Bernie Ebbers battery fraud charge call company whistleblower first witness.''}
-
-Enfin, nous vectoriserons les articles transformés pour obtenir un jeu de données adapté au machine learning. Cette étape sera réalisée dans un pipeline présenté dans la section suivante.
-
-\section{Entraînement des modèles}
-
-Afin de classifier les articles, nous testerons différents modèles de classification. Mais avant cela, il nous reste une dernière étape : diviser notre jeu de données en deux parties. La première sera utilisée pour l'entraînement et la seconde pour les tests. Il est recommandé, pour un jeu de données de notre envergure, de conserver $77\%$ du dataset pour l'entraînement et le reste pour les tests, ce que nous appliquerons ici.
-
-\subsection{Support Vector Machine Classifier}
-
-Le premier modèle choisi est le Support Vector Machine Classifier. Ce modèle est généralement utilisé sur des datasets de taille moyenne (quelques milliers), mais il peut également être très performant sur des jeux de données de qualité plus restreints.
-
-
-\subsubsection{Pipeline}
-
-Pour l'entraînement, nous créons deux pipelines permettant d'automatiser une série de tâches. Chaque pipeline se charge de :
+Pour ce faire, trois traitements sont réalisés : 
 \begin{itemize}
-    \item Vectoriser les articles grâce à la classe \texttt{CountVectorizer} fournie par \textit{Scikit-learn}.
-    \item \textit{TfidfTransformer} : calcule le poids des mots dans chaque phrase en fonction de leur fréquence dans le corpus.
-    \item Entraîner le modèle SVC sur le jeu de données modifié.
+    \item \textbf{Supprimer les éléments de ponctuation}.
+    \item \textbf{Retirer les mots à faible valeur sémantique (stop words)} : mots grammaticaux, mots de liaison, etc.
+    \item \textbf{Appliquer la lemmatisation} : uniformiser les mots pour faciliter l'apprentissage du modèle. Le WordNetLemmatizer de la bibliothèque \textit{nltk} \cite{nltk} est utilisé.
 \end{itemize}
 
-La deuxième pipeline est la suivante :
+Voici un exemple d'extrait d'article avant et après prétraitement :\\
+
+\textbf{Avant prétraitement}\\
+
+\textit{worldcom ex-boss launches defence lawyers defending former worldcom chief bernie ebbers against a battery of fraud charges have called a company whistleblower as their first witness.  cynthia cooper  worldcom s ex-head of internal accounting  alerted directors to irregular accounting practices at the us telecoms giant in 2002. [...]}\\
+
+\textbf{Après prétraitement}\\
+
+\textit{worldcom exboss launch defence lawyer defending former worldcom chief bernie ebbers battery fraud charge called company whistleblower first witness cynthia cooper worldcom exhead internal accounting alerted director irregular accounting practice u telecom giant 2002 [...]}\\
+
+\subsection{Vectorisation}
+
+Une fois prétraitées, les données textuelles doivent être transformées en données numériques afin que le modèle puisse effectuer des calculs et des prédictions sur ces données.\\
+
+Pour ce faire, différentes techniques de vectorisation peuvent être utilisées. Dans le cadre de ce projet, deux techniques sont utilisées : 
 \begin{itemize}
-    \item Vectoriser les articles grâce à la classe \texttt{CountVectorizer} fournie par \textit{Scikit-learn}.
-    \item \textit{Doc2Vec} : une méthode donnant un poids aux mots en se basant sur des réseaux de neurones.
-    \item Entraîner le modèle SVC sur le jeu de données modifié.
+    \item \textbf{TF-IDF} (Term Frequency Inverse Document Frequency)
+    \item \textbf{Doc2Vec}
 \end{itemize}
 
-\subsubsection{Validation}
+\subsubsection{TF-IDF}
 
-Pour valider un modèle, nous nous baserons sur les métriques proposées par Scikit-learn : l'accuracy et la précision principalement. En utilisant les deux pipelines, on obtient les mêmes résultats sauf pour l'accuracy. On gagne 1\% de plus en score en utilisant \textit{Doc2Vec} : 98\% contre 97\%.
+Le TF-IDF, qui signifie "Term Frequency-Inverse Document Frequency" (Fréquence du Terme - Fréquence Inverse du Document), est une mesure statistique utilisée pour évaluer l'importance d'un mot dans un document, qui fait partie d'une collection ou d'un corpus de plusieurs documents.\\
 
-\subsection{K-Neighbors Classifier}
+La \textbf{Fréquence du Terme} (TF), mesure la fréquence d'un mot dans un document donné. Cela signifie simplement combien de fois un mot apparaît dans le document. Plus un mot est fréquent dans un document, plus sa valeur de TF est élevée. Cependant, cette mesure ne prend pas en compte le fait que certains mots peuvent être fréquents dans tous les documents en général.\\
 
-Le second modèle choisi est le K-Neighbors Classifier. Ce modèle peut performer correctement sur notre dataset, mais il est généralement plus lent que le précédent.
+La \textbf{Fréquence Inverse du Document} (IDF) mesure à quel point un mot est commun ou rare dans l'ensemble du corpus. IDF donne plus de poids aux mots qui sont rares dans le corpus entier, et moins de poids aux mots qui sont communs. Cela aide à distinguer les mots qui sont vraiment significatifs pour un document particulier.\\
 
-\subsubsection{Pipeline}
+En combinant ces deux mesures, TF-IDF permet de représenter les documents de manière numérique en attribuant à chaque mot un score qui reflète à la fois sa fréquence dans un document particulier et son importance dans l'ensemble du corpus. Les mots avec des scores TF-IDF élevés sont considérés comme plus importants, et ceux avec des scores bas sont moins significatifs.\\
 
-Pour l'entraînement, nous reprenons les deux pipelines présentées précédemment.
+Ci-dessous les formules permettant de calculer le TF-IDF.\\
 
-\subsubsection{Validation}
+$\text{TF}(t, d) = \frac{\text{Nombre de fois que le terme } t \text{ apparaît dans le document } d}{\text{Nombre total de termes dans le document } d}$\\
 
-En utilisant les deux pipelines, on obtient de moins bons résultats en utilisant le \textit{TF-IDF} (95\% d'accuracy). Alors qu'avec \textit{Doc2Vec}, on obtient des résultats similaires à ceux du SVM entraîné avec une pipeline \textit{TF-IDF}.
+$\text{IDF}(t, D) = \log \left(\frac{\text{Nombre total de documents dans le corpus } D}{\text{Nombre de documents contenant le terme } t}\right)$\\
 
-\section{Recommandation d'articles}
+$\text{TF-IDF}(t, d, D) = \text{TF}(t, d) \times \text{IDF}(t, D)$\\
 
-Dans cette section, nous nous intéressons à la seconde tâche de notre algorithme : la recommandation d'articles similaires.
+Cette technique est implémentée dans ce projet à l'aide du \textit{CountVectorizer} et du \textit{TFIDFTransformer} de la bibliothèque \textit{scikit-learn} \cite{tfidfsklearn}.
 
-\subsection{Cosine Similarity}
 
-Pour calculer la similarité entre deux articles, nous avons utilisé la métrique \textit{cosine similarity} fournie par la librairie \textit{Scikit-Learn} en Python. Nous avons calculé cette métrique entre l'article de l'utilisateur et tous les articles filtrés à l'étape précédente. Enfin, nous avons sélectionné seulement les trois articles ayant la plus grande valeur.\\
+\subsubsection{Doc2Vec}
 
-Notre algorithme recommandera alors ces trois articles qu'il considérera comme les plus proches de l'original.
+Doc2Vec est une extension de l'approche Word2Vec pour la représentation de documents entiers. Développée par Le et Mikolov en 2014, cette méthode permet de générer une représentation vectorielle fixe pour des séquences de mots de longueur variable, comme des phrases, des paragraphes ou des documents entiers.\\
 
-\subsection{Évaluation}
+Alors que Word2Vec génère des représentations vectorielles pour des mots individuels, Doc2Vec étend ce concept en incorporant un vecteur 'document' supplémentaire pour représenter l'ensemble du document.
 
-Après avoir implémenté cette méthode, il nous fallait l'évaluer. Quelle est la cohérence des recommandations ? Pour cela, nous avons utilisé deux méthodes différentes. Un de nos objectifs secondaires était de trouver une manière d'automatiser cette évaluation, car habituellement elle est manuelle.
+Pendant l'entraînement, Doc2Vec apprend simultanément les représentations vectorielles des mots et des documents en ajustant les vecteurs pour prédire les mots dans le contexte.\\
 
-\subsubsection{Évaluation par extraction de mots-clés}
+Cette technique de vectorisation présente un certain nombre d'avantages : 
+\begin{itemize}
+    \item \textbf{Représentation dense} : contrairement aux modèles TF-IDF qui génèrent des vecteurs de haute dimension et creux (beaucoup de zéros dans le vecteur), Doc2Vec produit des vecteurs denses, ce qui peut améliorer l'efficacité et la performance des modèles de classification.
+    \item \textbf{Capture du contexte} : Doc2Vec prend en compte l'ordre des mots et le contexte, permettant de capturer des nuances sémantiques plus riches qu'une simple analyse de fréquence des mots.
+    \item \textbf{Capacité à gérer des documents de tailles variables} : Doc2Vec peut traiter efficacement des documents de différentes longueurs, ce qui est particulièrement utile pour les ensembles de données hétérogènes.
+\end{itemize}
 
-La première méthode que nous avons utilisée est l'extraction de mots-clés. Nous avons extrait les mots-clés de chaque document en utilisant une fonction proposée par la librairie \textit{yake}.\\
+C'est l'implémentation de la bibliothèque \textit{Gensim} \cite{gensim} qui est utilisée dans ce projet.
 
-Nous avons ensuite calculé la similarité entre les articles en nous basant sur le nombre de mots-clés en commun.\\
 
-Pour calculer l'accuracy de notre méthode, nous sommes partis du principe que si \textbf{un} des 3 articles recommandés figurait parmi les articles similaires (selon la méthode d'extraction de mots-clés), alors la recommandation était bonne.\\
 
-Nous avons alors obtenu une accuracy de 34\%.
+\section{Modèles de classification}
 
-\subsubsection{Évaluation par LLM}
+La première étape du système de recommandation consiste à classifier l'article fournit par l'utilisateur. \\
 
-Cette méthode n'étant pas satisfaisante, nous avons décidé de tester une autre manière d'évaluer nos résultats en utilisant de grands modèles de langage. Dans le cadre de cette évaluation, nous avons utilisé OPENAI-GPT4, Claude AI, GEMINI et Mistral AI.\\
+Afin d'optimiser l'efficacité de cette classification, deux modèles de classification (SVM et KNN) sont évalués et comparés utilisant les deux méthodes de vectorisation présentées précédemment. Cela donne quatre modalités d'entraînement : 
+\begin{itemize}
+    \item SVM + TF-IDF
+    \item SVM + Doc2Vec
+    \item KNN + TF-IDF
+    \item KNN + Doc2Vec
+\end{itemize}
 
-Nous leur avons fourni un article utilisateur et 10 autres articles aléatoires de la même catégorie. Nous leur avons ensuite demandé de retourner les 3 articles les plus similaires selon eux.\\
+Pour ces entraînements, le jeu de données étiquetées est séparé en deux parties : $77\%$ pour l'entrainement et le reste pour l'évaluation.\\
 
-Tous les LLM ont retourné quasiment les 2 premiers articles et ont chacun proposé un article différent pour la 3ème position. Malheureusement, seul le 3ème article proposé par Gemini a été recommandé par notre algorithme.
+\subsection{Support Vector Machine (SVM)}
 
-\subsubsection{Évaluation manuelle}
+Le premier modèle choisi est le SVM. Ce modèle est très efficace pour les tailles d'ensemble de données modérées.
 
-Toutefois, ces méthodes d'évaluation ne sont pas parfaites et les résultats ne sont pas concluants. En effet, l'extraction de mots-clés pour évaluer la similarité entre deux articles est une méthode moins efficace que la \textit{cosine similarity}. De même, le classement des articles de recommandations par les LLM n'a pas de grande valeur, car on ne sait pas comment cette évaluation est effectuée.\\
+Il consiste à trouver un hyperplan dans un espace de caractéristiques multidimensionnel qui sépare de manière optimale les différentes classes de données (catégories d'articles).\\
 
-Le meilleur moyen d'évaluer l'algorithme est de le tester manuellement avec des utilisateurs réels. Les résultats obtenus seront alors plus concluants et cohérents pour évaluer notre modèle.
+L'implémentation SVM utilisée est celle de \textit{scikit-learn} \cite{svm}.\\
+
+
+
+\subsubsection{Entraînement}
+
+L'entraînement est réalisé avec les hyper-paramètres par défaut.\\
+
+Un pipeline permettant d'automatiser une séries de tâches (vectorisation + entraînement + prédiction) et faciliter la réutilisation du modèle une fois exporté est créé. 
+
+Se référer à la page \href{https://scikit-learn.org/stable/modules/compose.html}{\textit{Pipelines and composite estimators}} de la documentation scikit-learn pour plus d'informations sur les pipelines.\\
+
+Le modèle est entraîné selon deux modalités de vectorisation : 
+\begin{itemize}
+    \item TF-IDF
+    \item Doc2Vec
+\end{itemize}
+
+\subsubsection{Evaluation}
+
+Ci-dessous les rapports de classification pour chacune des modalités de vectorisation.\\
+
+\textbf{TF-IDF}\\
+
+\begin{figure}[H]
+  \centering
+  \includegraphics{images/svc_tfidf.png} 
+  \caption{SVC - TFIDF Classification report}
+  \label{fig:svctfidf}
+\end{figure}
+
+\textbf{Doc2Vec}\\
+
+\begin{figure}[H]
+  \centering
+  \includegraphics{images/svc_doc2vec.png} 
+  \caption{SVC - Doc2Vec Classification report}
+  \label{fig:svcdoc2vec}
+\end{figure}
+
+\textbf{Observations} :
+\begin{itemize}
+    \item Quelle que soit la modalité de vectorisation, toutes les métriques sont très bonnes.
+    \item L'utilisation de Doc2Vec comme technique de vectorisation améliore légèrement les résultats du modèle (1\% en plus sur l'accuracy) ; ce qui est attendu puisque cette méthode de vectorisation est censée mieux tenir compte du contexte des mots.
+\end{itemize}
+
+\subsection{K plus proches voisins (KNN)}
+
+Le second modèle testé est le KNN (K nearest Neighbors).\\
+
+KNN classe un document en se basant sur les classes des K documents les plus proches (voisins) dans l'espace des caractéristiques (vecteurs).
+
+La classe d'un nouveau document est déterminée par un vote majoritaire parmi ses K voisins. Si K = 3, par exemple, et que deux des trois voisins les plus proches appartiennent à la classe A et un à la classe B, le document sera classé en A.\\
+
+\subsubsection{Entraînement}
+
+La configuration d'entraînement est la même que celle utilisée pour le modèle SVM.
+
+\subsubsection{Evaluation}
+
+Voici les rapports de classification pour le modèle KNN suivant les deux modalités de vectorisation.\\
+
+\textbf{TFIDF}\\
+
+\begin{figure}[H]
+  \centering
+  \includegraphics{images/knn_tfidf.png} 
+  \caption{KNN - TFIDF Classification report}
+  \label{fig:knntfidf}
+\end{figure}
+
+\textbf{Doc2Vec}\\
+
+\begin{figure}[H]
+  \centering
+  \includegraphics{images/knn_doc2vec.png} 
+  \caption{KNN - Doc2Vec Classification report}
+  \label{fig:knndoc2vec}
+\end{figure}
+
+\textbf{Observations} :
+\begin{itemize}
+    \item Comme pour le modèle SVM, les métriques sont élevées quelle que soit la modalité de vectorisation.
+    \item Les résultats sont légèrement moins bons que ceux du modèle SVM (-1 / -2\%).
+    \item La vectorisation avec Doc2Vec donne de meilleurs résultats ici aussi.
+\end{itemize}
+
+
+\section{Système de recommandation}
+
+Une fois l'article fournit par l'utilisateur classifié, il faut calculer la similarité entre cet article et l'ensemble des articles étiquetés présents dans la base de données étiquetées. Les trois articles les plus similaires sont ensuite recommandés.\\
+
+Cette partie vise à présenter le système de recommandation (calcul de similarité + sélection des articles à recommander) ainsi que les méthodes employées pour évaluer ce système.
+
+\subsection{Calcul de similarité et recommandation}
+
+La métrique utilisée pour le calcul de similarité est la \textit{similarité cosinus (cosine similarity)}.\\
+
+La similarité cosinus est une mesure couramment utilisée pour évaluer le degré de similitude entre deux documents dans le traitement du langage naturel (NLP) et la recherche d'information. Cette mesure compare deux documents sous forme de vecteurs dans un espace multidimensionnel.
+
+Elle est calculée comme le cosinus de l'angle entre deux vecteurs représentant deux documents. Plus la valeur est proche de 1, plus les documents comparés sont similaires.\\
+
+Contrairement à d'autres mesures, la similarité cosinus est indépendante de la longueur des documents. Elle mesure l'orientation et non la magnitude des vecteurs, ce qui la rend utile pour comparer des documents de différentes longueurs.\\
+
+L'implémentation utilisée dans ce projet est celle de scikit-learn \cite{cosine}.\\
+
+Les trois articles ayant les scores de similarité cosinus les plus élevés sont recommandés. Des exemples sont présents dans le notebook de recommandation.
+
+
+\subsection{Evaluation}
+
+Trois méthodes d'évaluations du système de recommandation sont implémentées : 
+\begin{itemize}
+    \item Comptabilisation du nombre de mots-clés en commun entre les articles recommandés et l'article fournit par l'utilisateur.
+    \item Utilisation des LLMs pour effectuer les recommandations et comparer leurs résultats avec ceux de notre système de recommandation.
+    \item Evaluation manuelle basée sur notre lecture des articles.
+\end{itemize}
+
+Les deux premières ont pour objectif d'automatiser le processus d'évaluation. La dernière est la plus couramment utilisée pour les systèmes de recommandation puisque plus qualitative. 
+
+
+\subsubsection{Extraction de mots-clés}
+
+Cette méthode d'évaluation consiste à extraire k mots-clés de l'article fournit par l'utilisateur et des trois articles recommandés, en utilisant l'extracteur de mots-clés de la bibliothèque Yake \cite{yake}.\\
+
+Un calcul de similarité est d'abord réalisé en se basant sur le nombre de mots-clés en commun. Les trois articles comportant le plus de mots-clés en commun avec l'article fournit par l'utilisateur sont recommandés.\\
+
+Ces articles recommandés sur la base des mots-clés en commun sont ensuite comparés avec les articles recommandés obtenus avec la similarité cosinus.
+
+Si un des articles recommandés avec la similarité cosinus est présent dans les trois articles recommandés avec l'extraction de mots-clés, on considère que la recommandation est bonne (= bonne prédiction).\\
+
+L'opération est répétée pour chaque article du jeu de données non étiquetées (articles fournis par l'utilisateur), et une accuracy est calculée (total bonnes recommandations / total recommandation * 100).
+
+Suivant cette méthode, on obtient une accuracy égale à 34\%.\\
+
+\textbf{Remarque} : Cette méthode ne constitue qu'une tentative d'automatiser l'évaluation du système de recommandation. La métrique obtenue n'est pas fiable car le calcul de similarité en utilisant l'extraction de mots-clés est moins qualitatif que celui utilisant la similarité cosinus.
+
+
+\subsubsection{LLMs}
+
+L'idée ici est d'utiliser différents LLMs pour effectuer la recommandation.\\
+
+Pour ce faire, un prompt est fournit en entrée de quatre LLMs :
+\begin{itemize}
+    \item OpenAI GPT4
+    \item Claude AI
+    \item Gemini
+    \item Mistral AI
+\end{itemize}
+
+Ci-dessous le prompt en question.\\
+
+\textit{"I'll give you one tech news article and I want you to recommend 3 articles among 10 other tech articles that I'll provide  that seem to be the most similar with the first tech article.}\\
+
+\textit{Here's the first tech article : `article`}\\
+
+\textit{And here are 10 tech news articles (separated with ---) from which you should recommend the 3 most similar ones with the previous article:
+`articles`"}\\
+
+L'évaluation est réalisé pour un seul article fournit en entrée et 10 articles pouvant être recommandés. Comme mentionné dans le prompt, il est demandé aux LLMs de sélectionner parmi les dix articles les trois articles les plus similaires avec celui fournit en entrée. Il s'agit ici seulement d'un test illustrant l'idée. Il faudrait répéter ce processus sur l'ensemble du jeu de données.\\
+
+Presque tous les LLMs ont recommandé les 2 premiers articles et ont chacun proposé un article différent pour le 3ème article recommandé. Malheureusement, seul le 3ème article proposé par Gemini a été recommandé par notre algorithme.\\
+
+Les résultats sont disponibles dans le notebook.
+
+\subsubsection{Evaluation manuelle}
+
+Le classement des articles par les LLMs n’a pas de grande valeur pour l'évaluation car on ne sait pas vraiment comment cette évaluation est effectuée.\\
+
+Le meilleur moyen d’évaluer l’algorithme est de le tester manuellement avec des utilisateurs réels, qui sont finalement les mieux placés pour évaluer la qualité de la recommandation.\\
+
+Malheureusement, nous n'avons pas pris le temps d'effectuer cette évaluation. 
 
 
 \section{Conclusion}
 
+Ce projet a permis, à travers la réalisation d'un système de recommandation d'articles, de mettre en application différents concepts et méthodes du traitement automatique du texte :
+\begin{itemize}
+    \item \textbf{Prétraitement des données textuelles} : pour retirer tout ce qui n'apporte pas de plus-value sémantique. cela se traduit dans ce projet par la suppression de la ponctuation et des mots à faible valeur sémantique (stop words), ainsi que par la lemmatisation.
+    \item \textbf{Vectorisation} : transformer les données textuelles en données numériques pour pouvoir faire des calculs. La méthode de vectorisation Doc2Vec est plus efficace que le TF-IDF.
+    \item \textbf{Modèles de classification de documents} : des modèles SVM et KNN ont été entraînés pour classifier les articles d'actualité de la BBC. Les résultats de l'évaluation ont montré l'efficacité de ces modèles et l'importance de la méthode de vectorisation utilisée.
+    \item \textbf{Calcul de similarité} : en utilisant la similarité cosinus pour mesurer la proximité sémantique entre les articles.
+\end{itemize}
+
+Le point sensible réside dans l'évaluation du système de recommendation. Les tentatives d'automatisation du processus d'évaluation ne procurent pas de résultats fiables. Il semblerait que la meilleure méthode d'évaluation reste celle effectuée par les utilisateurs finaux.
 
 
 
+\newpage
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+\printbibliography[
+heading=bibintoc,
+title={Références}
+]
 
 
 \end{document}
